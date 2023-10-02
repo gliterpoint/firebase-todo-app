@@ -1,17 +1,19 @@
 import { useState } from "react";
+import { PenSquare } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import "./App.css";
 
 function App() {
   const [TodoList, setTodoList] = useState([]);
-  const [todo, setTodo] = useState({
-    id: Math.random().toString(36).substring(2, 10),
+  const [Todo, setTodo] = useState({
+    id: "",
     title: "",
     isCompleted: false,
   });
 
   const handleTodo = (e) => {
     e.preventDefault();
-    setTodoList((prev) => [todo, ...prev]);
+    setTodoList((prev) => [{ ...Todo, id: new Date().getTime().toString() }, ...prev]);
     setTodo({ id: "", title: "", isCompleted: "" });
   };
 
@@ -20,6 +22,9 @@ function App() {
   };
   const DeleteTodo = (id) => {
     console.log(id);
+    const todoDel = TodoList.filter((todo) => todo.id !== id);
+    setTodoList(todoDel);
+    console.log(todoDel);
   };
 
   return (
@@ -33,10 +38,10 @@ function App() {
             <div className="flex-grow">
               <input
                 type="text"
-                value={todo.title}
-                placeholder="Place your Todo here"
+                value={Todo.title}
+                placeholder="Enter your Todo here"
                 className="w-full outline-none border border-slate-200 rounded-md px-4 py-2 font-in text-base placeholder:text-base placeholder:text-slate-300"
-                onChange={(e) => setTodo({ ...todo, title: e.target.value })}
+                onChange={(e) => setTodo({ ...Todo, title: e.target.value })}
                 maxLength={50}
                 required
               />
@@ -62,16 +67,16 @@ function App() {
                     </div>
                     <div className="flex items-center justify-between space-x-2">
                       <button
-                        className="bg-orange-500 text-white px-3 py-1 rounded-md focus:outline-none outline-line border-none"
+                        className="bg-orange-400 text-white px-3 py-2 rounded-md focus:outline-none outline-line border-none"
                         onClick={() => EditTodo(todo.id)}
                       >
-                        E
+                        <PenSquare size={18} />
                       </button>
                       <button
-                        className="bg-red-500 text-white px-3 py-1 rounded-md focus:outline-none outline-line border-none"
+                        className="bg-red-500 text-white px-3 py-2 rounded-md focus:outline-none outline-line border-none"
                         onClick={() => DeleteTodo(todo.id)}
                       >
-                        D
+                        <Trash2 size={18} />
                       </button>
                     </div>
                   </div>
