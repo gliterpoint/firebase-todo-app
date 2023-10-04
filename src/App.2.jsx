@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { CheckSquare, PenSquare } from "lucide-react";
 import { Trash2 } from "lucide-react";
-import "./App.css";
 
-function App() {
+export function App() {
   const [TodoList, setTodoList] = useState([]);
+  const [Editable, setEditable] = useState(false);
   const [Todo, setTodo] = useState({
     id: "",
     title: "",
     isCompleted: false,
-    isEditing: false,
   });
+  const [Todomsg, setTodomsg] = useState(Todo.title);
 
   // Add Todo Handler
   const AddTodo = (e) => {
@@ -20,8 +20,11 @@ function App() {
   };
 
   // Edit Todo Handler
-  const EditTodo = (id) => {
-    setTodoList((prev) => prev.map((todo) => (todo.id === id ? { ...todo, isEditing: !todo.isEditing } : todo)));
+  const EditTodo = (id, todo) => {
+    console.log(id);
+    console.log(todo);
+    const todoFilter = TodoList.map((todo) => todo.id === id);
+    console.log(todoFilter);
   };
 
   // Delete Todo Handler
@@ -61,33 +64,34 @@ function App() {
         </form>
         <div className="flex flex-col gap-2 mt-5 font-in">
           {TodoList.length > 0 ? (
-            TodoList.map((todo) => {
+            TodoList.map((todo, index) => {
               return (
-                <div key={todo.id}>
-                  <div className="flex items-center justify-between space-x-3 rounded-md overflow-hidden pr-3  border border-slate-100/10">
-                    <div className="flex-1">
+                <div key={index}>
+                  <div className="flex items-center justify-between space-x-3 rounded-md overflow-hidden  border border-slate-100/10">
+                    <div>
                       <input
                         type="text"
                         value={todo.title}
-                        onChange={(e) => {
-                          if (todo.isCompleted || !todo.isEditing) return;
-                          setTodoList((prev) =>
-                            prev.map((item) => (item.id === todo.id ? { ...todo, title: e.target.value } : item))
-                          );
-                        }}
-                        readOnly={!todo.isEditing || todo.isCompleted}
-                        className="w-full px-4 py-3 outline-none bg-transparent"
+                        onChange={() => EditTodo(todo.id, todo.title)}
+                        readOnly={!Editable}
+                        className="px-4 py-2 outline-none bg-transparent"
                       />
+                      {/* <p className="text-base leading-6">{todo.title}</p> */}
                     </div>
                     <div className="flex items-center justify-between space-x-2">
                       <button
                         className="bg-orange-400/80 text-white px-3 py-2 rounded-md focus:outline-none outline-line border-none"
                         onClick={() => {
-                          EditTodo(todo.id);
+                          if (todo.isCompleted) return;
+                          if (Editable) {
+                            setEditable(false);
+                          } else {
+                            setEditable((prev) => !prev);
+                          }
                         }}
                         disabled={todo.isCompleted}
                       >
-                        {todo.isEditing ? <CheckSquare size={18} /> : <PenSquare size={18} />}
+                        {Editable ? <CheckSquare size={18} /> : <PenSquare size={18} />}
                       </button>
                       <button
                         className="bg-red-500/80 text-white px-3 py-2 rounded-md focus:outline-none outline-line border-none"
@@ -108,5 +112,3 @@ function App() {
     </>
   );
 }
-
-export default App;
